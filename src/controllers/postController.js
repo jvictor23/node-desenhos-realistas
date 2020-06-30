@@ -4,17 +4,41 @@ const multerConfig = require('../config/multer');
 const Album = require('../models/album');
 const Post = require('../models/imgPost');
 
-router.post('/post/img', multer(multerConfig).single('file'), async (req, res) =>{
-
-    const post = await Post.create({
-        titulo: req.file.originalname,
-        size: req.file.size,
-        key: req.file.filename,
-        url: ''
-    })
-
-    res.send(post);
+router.post('/upload/img', multer(multerConfig).single('file'), async (req, res) =>{
+    console.log(req.file)
+    res.send(req.file)
 });
+
+router.post('/post/img', async(req, res)=>{
+    try {
+        const post = await Post.create(req.body)
+        res.send(post)
+    } catch (error) {
+        res.status(400).send({error: "Erro ao adicionar imagem"})
+    }
+})
+
+router.get('/post/img/:id', async(req, res)=>{
+    try {
+        const posts = await Post.find({idAlbum: req.params.id})
+        res.send(JSON.stringify(posts))
+    } catch (error) {
+        res.status(400).send({error: "Erro ao carregar imagens!"})
+    }
+})
+
+router.delete('/post/img', async(req,res)=>{
+    try{
+        const post = Post.findByIdAndDelete(req.params.id);
+        if(post.length === 0){
+            res.status(400).send({error: "Imagem não existe!"})
+        }
+
+        res.send(true);
+    }catch(err){
+        res.status(400).send({error: "Erro ao excluir imagem"})
+    }
+})
 
 router.post('/album/create', async (req,res)=>{
     const {titulo} = req.body;

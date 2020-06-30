@@ -16,7 +16,7 @@ const imgSchema = new mongoose.Schema({
 
     idAlbum:{
         type: String,
-        required: true
+        required:true
     },
 
     createAt:{

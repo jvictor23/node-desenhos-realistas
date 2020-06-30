@@ -30,7 +30,6 @@ module.exports = {
             "image/jpg",
             "image/png"
         ];
-        console.log("Chegou aqui")
 
         if(allowedMimes.includes(file.mimetype)){
             cb(null, true);
