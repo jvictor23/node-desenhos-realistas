@@ -14,6 +14,11 @@ const imgSchema = new mongoose.Schema({
         type: String,
     },
 
+    idAlbum:{
+        type: String,
+        required: true
+    },
+
     createAt:{
         type: Date,
         default: Date.now
