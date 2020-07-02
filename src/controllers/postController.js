@@ -4,11 +4,33 @@ const multerConfig = require('../config/multer');
 const Album = require('../models/album');
 const Post = require('../models/imgPost');
 
+//Upload de imagem
 router.post('/upload/img', multer(multerConfig).single('file'), async (req, res) =>{
-    console.log(req.file)
-    res.send(req.file)
+    if(req.file.path){
+
+        const {key: fileName, size} = req.file;
+        const data={
+            fileName,
+            size,
+        }
+        res.send(data); 
+        console.log("local")
+      
+    }else{
+        
+        const {key: fileName, size, location: url} = req.file;
+        const data={
+            fileName,
+            size,
+            url
+        }
+        res.send(data); 
+        console.log("s3")
+    }
+    
 });
 
+//Salvar Dados da imagem
 router.post('/post/img', async(req, res)=>{
     try {
         const post = await Post.create(req.body)
@@ -18,6 +40,7 @@ router.post('/post/img', async(req, res)=>{
     }
 })
 
+//Recuperar todas imagens (o id é do album)
 router.get('/post/img/:id', async(req, res)=>{
     try {
         const posts = await Post.find({idAlbum: req.params.id})
@@ -27,12 +50,12 @@ router.get('/post/img/:id', async(req, res)=>{
     }
 })
 
-router.delete('/post/img', async(req,res)=>{
+//deletar imagem (o id é da imagem)
+router.delete('/post/img/:id', async(req,res)=>{
     try{
-        const post = Post.findByIdAndDelete(req.params.id);
-        if(post.length === 0){
-            res.status(400).send({error: "Imagem não existe!"})
-        }
+        const post = await Post.findById(req.params.id);
+        
+        await post.remove();
 
         res.send(true);
     }catch(err){
@@ -40,6 +63,7 @@ router.delete('/post/img', async(req,res)=>{
     }
 })
 
+//Criar album
 router.post('/album/create', async (req,res)=>{
     const {titulo} = req.body;
     try{
@@ -56,6 +80,7 @@ router.post('/album/create', async (req,res)=>{
   
 })
 
+// Atualizar Album
 router.put('/album/:id', async (req, res)=>{
     const {titulo} = req.body;
     try{
@@ -73,6 +98,7 @@ router.put('/album/:id', async (req, res)=>{
     }
 })
 
+// Recuperar todos albuns
 router.get('/album', async(req, res)=>{
    try{
     const albuns = await Album.find();
@@ -84,6 +110,7 @@ router.get('/album', async(req, res)=>{
    }
 })
 
+//Recuperar album pelo id (o id é do album)
 router.get('/album/:id', async (req, res)=>{
     
     
@@ -98,6 +125,7 @@ router.get('/album/:id', async (req, res)=>{
 
 })
 
+//Deletar album
 router.delete('/album/:id', async (req, res) =>{
     try {
         const deletar = await Album.findByIdAndDelete(req.params.id);

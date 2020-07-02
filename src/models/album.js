@@ -9,6 +9,11 @@ const albumSchema = new mongoose.Schema({
 
     urlUltimaImagem:{
         type: String
+    },
+
+    createdAt:{
+        type: Date,
+        default: Date.now
     }
 });
 
