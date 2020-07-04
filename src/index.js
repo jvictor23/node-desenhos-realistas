@@ -9,7 +9,8 @@ const path = require('path');
 app.use(bodyParse.json());
 app.use(bodyParse.urlencoded({extended: true}));
 app.use(cors());
-app.use('/file', express.static(path.resolve(__dirname, '..', 'tmp/', 'uploads')))
+app.use('/files', express.static(path.resolve(__dirname, '..', 'tmp', 'uploads')));
+
 
 require('./controllers/authController')(app);
 require('./controllers/projectController')(app);

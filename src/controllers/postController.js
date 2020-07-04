@@ -82,17 +82,27 @@ router.post('/album/create', async (req,res)=>{
 
 // Atualizar Album
 router.put('/album/:id', async (req, res)=>{
-    const {titulo} = req.body;
+    const {titulo, urlUltimaImagem} = req.body;
     try{
-        if(await Album.findOne({titulo})){
-            return res.status(400).send({error: "Este album já existe!"})
+
+        if(urlUltimaImagem){
+            await Album.findByIdAndUpdate(req.params.id, {$set:{urlUltimaImagem}}, {useFindAndModify: false});
+            const album = await Album.findById(req.params.id);
+            
+            res.send(album);
+        }else{
+
+            if(await Album.findOne({titulo})){
+                return res.status(400).send({error: "Este album já existe!"})
+            }
+    
+            await Album.findByIdAndUpdate(req.params.id, {$set:{titulo: titulo}});
+            const album = await Album.findById(req.params.id);
+            
+            res.send(album);
+
         }
-
-        await Album.findByIdAndUpdate(req.params.id, {$set:{titulo: titulo}});
-        const album = await Album.findById(req.params.id);
         
-        res.send(album);
-
     }catch(err){
         return res.status(400).send({error: "Erro ao atualizar album!"});
     }

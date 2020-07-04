@@ -17,7 +17,6 @@ router.get('/post/img/:id', async(req, res)=>{
 router.get('/album', async(req, res)=>{
     try{
      const albuns = await Album.find().limit(3);
-     console.log(albuns);
      res.send(albuns);
         
     }catch(err){
