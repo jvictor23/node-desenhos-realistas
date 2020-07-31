@@ -49,7 +49,8 @@ imgSchema.pre('remove', function(){
     }else{
         return promisify(fs.unlink)(path.resolve(__dirname, '..', '..', 'tmp', 'uploads', this.key));
     }
-})
+});
+
 
 const imgPost = mongoose.model('imgPost', imgSchema);
 

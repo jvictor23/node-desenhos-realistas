@@ -138,10 +138,18 @@ router.get('/album/:id', async (req, res)=>{
 //Deletar album
 router.delete('/album/:id', async (req, res) =>{
     try {
-        const deletar = await Album.findByIdAndDelete(req.params.id);
-        if(deletar.length === 0){
-            res.status(400).send({error: "Este album não existe ou já foi excluido!"})
-        }
+        const deletar = await Album.findById(req.params.id);
+        
+        //Deletar todas as imagens do album
+       const deleteImages = await Post.find({idAlbum: req.params.id});
+
+       for(const data in deleteImages){
+           const post = await Post.findById(deleteImages[data]._id);
+           post.remove();
+       }
+       
+        //Deletar o Album
+        await deletar.remove();
         res.send(true);
     } catch (error) {
         res.status(400).send({error: "Erro ao excluir album!"})
